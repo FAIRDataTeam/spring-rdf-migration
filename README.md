@@ -10,9 +10,9 @@ Firstly, you need to define a migration runner bean in your configuration.
 
 ```java
 @Bean
-public RdfProductionMigrationRunner rdfProductionMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
+public RdfMigrationRunner rdfMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
                                                                  ApplicationContext appContext) {
-    RdfProductionMigrationRunner mr = new RdfProductionMigrationRunner(rdfMigrationRepository, appContext);
+    RdfMigrationRunner mr = new RdfMigrationRunner(rdfMigrationRepository, appContext);
     mr.run();
     return mr;
 }
@@ -36,7 +36,7 @@ That's all! You can start creating your migrations. See the example below.
     name = "Init migration",
     description = "Load initial data into Triple Store")
 @Service
-public class Rdf_Migration_0001_Init implements RdfProductionMigration {
+public class Rdf_Migration_0001_Init implements Migratable {
 
     @Autowired
     protected Repository repository;
@@ -56,8 +56,8 @@ public class Rdf_Migration_0001_Init implements RdfProductionMigration {
 
 **Stack:**
 
- - **Java** (recommended JDK 17)
- - **Maven** (recommended 3.2.5 or higher)
+ - **Java** (recommended JDK 21)
+ - **Maven** (recommended 3.9.9 or higher)
 
 ### Package the application
 

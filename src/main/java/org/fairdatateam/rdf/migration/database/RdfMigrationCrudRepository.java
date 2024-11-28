@@ -22,15 +22,17 @@
  */
 package org.fairdatateam.rdf.migration.database;
 
-import org.fairdatateam.rdf.migration.entity.RdfMigration;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.fairdatateam.rdf.migration.entity.JpaRdfMigration;
+
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * A Mongo repository for manipulating with {@link RdfMigration}
- *
- * @author Vojtech Knaisl (vknaisl)
- * @since 1.0.0
+ * A repository for storing {@link JpaRdfMigration} 
+ * entities in a relational database such as PostgreSQL.
+ * 
+ * @author dennisvang
+ * @since 2.1.0 
  */
-public interface RdfMigrationRepository extends MongoRepository<RdfMigration, String> {
-
+public interface RdfMigrationCrudRepository extends CrudRepository<JpaRdfMigration, Long> {
+    
 }

@@ -20,44 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.rdf.migration.entity;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.fairdatateam.rdf.migration.runner;
 
 /**
- * An annotation serves for marking classes which should contain a concrete migration. Its
- * properties contain a meta-information about the migration.
+ * An interface that is required to be implemented by a target migration class. A logic of the migration should be
+ * included in the method {@link Migratable#runMigration()}
  *
  * @author Vojtech Knaisl (vknaisl)
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface RdfMigrationAnnotation {
+public interface Migratable {
 
     /**
-     * A number of the migration in your application ({@link org.fairdatateam.rdf.migration.entity.MongoRdfMigration#number})
-     *
-     * @return A getter for the value
+     * A content of the migration
      */
-    int number();
-
-    /**
-     * A name of the migration ({@link org.fairdatateam.rdf.migration.entity.MongoRdfMigration#name})
-     *
-     * @return A getter for the value
-     */
-    String name();
-
-    /**
-     * A quick description of the purpose of the migration
-     * ({@link org.fairdatateam.rdf.migration.entity.MongoRdfMigration#description})
-     *
-     * @return A getter for the value
-     */
-    String description();
+    void runMigration();
 
 }

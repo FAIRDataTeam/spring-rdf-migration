@@ -20,20 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.fairdatateam.rdf.migration.runner;
+package org.fairdatateam.rdf.migration.database;
+
+import org.fairdatateam.rdf.migration.entity.MongoRdfMigration;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * An interface that is required to be implemented by a target migration class. A logic of the migration should be
- * included in the method {@link RdfProductionMigration#runMigration()}
+ * A Mongo repository for manipulating with {@link MongoRdfMigration}
  *
  * @author Vojtech Knaisl (vknaisl)
  * @since 1.0.0
  */
-public interface RdfProductionMigration {
-
-    /**
-     * A content of the migration
-     */
-    void runMigration();
+public interface RdfMigrationMongoRepository extends MongoRepository<MongoRdfMigration, ObjectId> {
 
 }

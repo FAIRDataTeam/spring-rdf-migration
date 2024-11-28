@@ -23,14 +23,16 @@
 package org.fairdatateam.rdf.migration.runner;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fairdatateam.rdf.migration.database.RdfMigrationRepository;
-import org.fairdatateam.rdf.migration.entity.RdfMigration;
+import org.fairdatateam.rdf.migration.database.RdfMigrationCrudRepository;
+import org.fairdatateam.rdf.migration.entity.JpaRdfMigration;
 import org.fairdatateam.rdf.migration.entity.RdfMigrationAnnotation;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The class contains a logic about executing the migration
@@ -39,19 +41,20 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @Slf4j
-public class RdfProductionMigrationRunner {
+@Service
+public class JpaRdfMigrationRunner {
 
     /**
      * A repository for storing information about metadata into a database
      */
-    private RdfMigrationRepository rdfMigrationRepository;
+    private final RdfMigrationCrudRepository rdfMigrationRepository;
 
     /**
      * A Spring application context that is needed to retrieve a concrete annotated migration class defined by a user
      */
-    private ApplicationContext appContext;
+    private final ApplicationContext appContext;
 
-    public RdfProductionMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
+    public JpaRdfMigrationRunner(RdfMigrationCrudRepository rdfMigrationRepository,
                                         ApplicationContext appContext) {
         this.rdfMigrationRepository = rdfMigrationRepository;
         this.appContext = appContext;
@@ -62,11 +65,11 @@ public class RdfProductionMigrationRunner {
      * them with already completed annotation, and runs the migrations that weren't run yet.
      */
     public void run() {
-        log.info("Production Migration of RDF Store started");
-        List<RdfMigration> migrationsInDB = rdfMigrationRepository.findAll();
-        int lastMigrationNumber = migrationsInDB
-                .stream()
-                .map(RdfMigration::getNumber)
+        log.info("Migration of RDF Store started");
+        Iterable<JpaRdfMigration> migrationsInDB = rdfMigrationRepository.findAll();
+        Stream<JpaRdfMigration> migrations = StreamSupport.stream(migrationsInDB.spliterator(), false);
+        int lastMigrationNumber = migrations
+                .map(JpaRdfMigration::getNumber)
                 .max(Integer::compareTo)
                 .orElse(0);
 
@@ -74,25 +77,25 @@ public class RdfProductionMigrationRunner {
                 .values()
                 .stream()
                 .map(o -> {
-                    if (!(o instanceof RdfProductionMigration)) {
-                        log.error("Defined Migration has to be type of RdfProductionMigration");
+                    if (!(o instanceof Migratable)) {
+                        log.error("Defined Migration has to implement Migratable");
                         return null;
                     }
-                    return (RdfProductionMigration) o;
+                    return (Migratable) o;
                 })
                 .filter(Objects::nonNull)
                 .filter(m -> getAnnotation(m).number() > lastMigrationNumber)
                 .sorted(Comparator.comparingInt(m -> getAnnotation(m).number()))
                 .forEach(m -> {
-                    RdfMigration mEntity = new RdfMigration(getAnnotation(m).number(),
+                    JpaRdfMigration mEntity = new JpaRdfMigration(getAnnotation(m).number(),
                             getAnnotation(m).name(),
                             getAnnotation(m).description());
-                    log.info("Production Migration (n. {}) started", mEntity.getNumber());
+                    log.info("Migration (n. {}) started", mEntity.getNumber());
                     m.runMigration();
                     rdfMigrationRepository.save(mEntity);
-                    log.info("Production Migration (n. {}) ended", mEntity.getNumber());
+                    log.info("Migration (n. {}) ended", mEntity.getNumber());
                 });
-        log.info("Production Migration of RDF Store ended");
+        log.info("Migration of RDF Store ended");
     }
 
     /**
@@ -101,9 +104,8 @@ public class RdfProductionMigrationRunner {
      * @param migration A migration from which we want to extract annotation
      * @return The desired annotation
      */
-    private RdfMigrationAnnotation getAnnotation(RdfProductionMigration migration) {
+    private RdfMigrationAnnotation getAnnotation(Migratable migration) {
         return migration.getClass().getAnnotation(RdfMigrationAnnotation.class);
     }
 
 }
-
