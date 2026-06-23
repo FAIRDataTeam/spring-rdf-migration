@@ -44,12 +44,12 @@ public class RdfProductionMigrationRunner {
     /**
      * A repository for storing information about metadata into a database
      */
-    private RdfMigrationRepository rdfMigrationRepository;
+    private final RdfMigrationRepository rdfMigrationRepository;
 
     /**
      * A Spring application context that is needed to retrieve a concrete annotated migration class defined by a user
      */
-    private ApplicationContext appContext;
+    private final ApplicationContext appContext;
 
     public RdfProductionMigrationRunner(RdfMigrationRepository rdfMigrationRepository,
                                         ApplicationContext appContext) {
