@@ -9,7 +9,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- TODO: upgrade spring boot (support for 2.2.x ended in 2020) -->
          <!-- https://spring.io/projects/spring-boot#support -->
-        <version>2.2.7.RELEASE</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
