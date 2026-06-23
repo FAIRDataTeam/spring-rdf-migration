@@ -15,6 +15,7 @@ jobs:
   test:
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
     with:
+      java-version: 21
       mvn-options: -Dgpg.skip
       db-type: "mongodb"
       db-version: 8
