@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "master"
+    labels:
+      - "maintenance"
+    # Group minor updates and patch updates, except for spring-boot-starter-parent updates,
+    # and create separate PRs for updates that do not match any grouping rule.
+    groups:
+      minor-updates:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "*spring-boot-starter-parent*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "master"
+    labels:
+      - "maintenance"
