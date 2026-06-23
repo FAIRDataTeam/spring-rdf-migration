@@ -7,10 +7,20 @@ on:
   release:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-verify.yml@v3
+    with:
+      mvn-options: -Dgpg.skip
+      db-type: "mongodb"
+      db-version: 8
   publish:
     needs: test
     uses: FAIRDataTeam/github-workflows/.github/workflows/maven-publish.yml@v3
     secrets: inherit
+    with:
+      mvn-options: -DskipTests
